@@ -1,0 +1,68 @@
+# PR6: Logistic Regression and KNN Classification
+
+import pandas as pd
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.pipeline import make_pipeline
+from sklearn.metrics import accuracy_score, precision_score
+from sklearn.metrics import recall_score, f1_score, confusion_matrix
+
+# Load Dataset
+data = pd.read_csv("Admission_Predict.csv")
+
+print("First 5 Rows:")
+print(data.head())
+
+# Check Missing Values
+print("\nMissing Values:")
+print(data.isnull().sum())
+
+# Separate Input and Target
+X = data.drop(["Serial No.", "target", "Chance of Admit"], axis=1)
+y = data["target"]
+
+# Split Dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# Logistic Regression
+lr = make_pipeline(
+    StandardScaler(),
+    LogisticRegression(max_iter=1000)
+)
+
+lr.fit(X_train, y_train)
+
+pred1 = lr.predict(X_test)
+
+# K-Nearest Neighbors
+knn = make_pipeline(
+    StandardScaler(),
+    KNeighborsClassifier(n_neighbors=5)
+)
+
+knn.fit(X_train, y_train)
+
+pred2 = knn.predict(X_test)
+
+# Evaluation Function
+def evaluate(name, actual, predicted):
+    print("\n", name)
+    print("Accuracy:", accuracy_score(actual, predicted))
+    print("Precision:", precision_score(actual, predicted))
+    print("Recall:", recall_score(actual, predicted))
+    print("F1 Score:", f1_score(actual, predicted))
+
+    print("Confusion Matrix:")
+    print(confusion_matrix(actual, predicted))
+
+
+# Display Results
+evaluate("Logistic Regression", y_test, pred1)
+evaluate("KNN Classification", y_test, pred2)
+
+print("\nClassification Completed Successfully!")
