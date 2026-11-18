@@ -1,0 +1,23 @@
+# Intelligent Agent: Smart Home Controller 
+print("SMART HOME INTELLIGENT AGENT") 
+
+# Taking input from sensors 
+motion = input("Is anyone in the room? (yes/no): ") 
+temperature = float(input("Enter room temperature: ")) 
+
+# Agent decision making
+if motion == "yes":
+     print("\nPerson detected in the room.")
+     print("Light: ON")
+
+     if temperature > 30:
+         print("Fan: ON")
+     else:
+         print("Fan: OFF")
+
+else:
+     print("\nNo person detected in the room.")
+     print("Light: OFF")
+     print("Fan: OFF")
+
+print("\nAgent completed its task.") 
