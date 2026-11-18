@@ -1,0 +1,63 @@
+# PR9: Model Optimization using Cross Validation and Grid Search
+
+import pandas as pd
+
+from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.metrics import accuracy_score
+
+# Load Dataset
+data = pd.read_csv("breast_cancer.csv")
+
+X = data.drop("target", axis=1)
+y = data["target"]
+
+# Split Dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Define Models and Parameters
+models = {
+    "SVM": (
+        make_pipeline(StandardScaler(), SVC()),
+        {"svc__C": [1, 10], "svc__kernel": ["linear", "rbf"]}
+    ),
+
+    "Random Forest": (
+        RandomForestClassifier(random_state=42),
+        {"n_estimators": [100, 200], "max_depth": [None, 10]}
+    ),
+
+    "AdaBoost": (
+        AdaBoostClassifier(random_state=42),
+        {"n_estimators": [50, 100], "learning_rate": [0.5, 1]}
+    )
+}
+
+# Model Evaluation and Optimization
+for name, (model, params) in models.items():
+    print("\n", name)
+
+    # Before Optimization
+    print("Before CV:", cross_val_score(model, X_train, y_train, cv=5).mean())
+
+    model.fit(X_train, y_train)
+
+    print("Before Accuracy:", accuracy_score(y_test, model.predict(X_test)))
+
+    # Grid Search
+    grid = GridSearchCV(model, params, cv=5)
+
+    grid.fit(X_train, y_train)
+
+    # After Optimization
+    print("Best Parameters:", grid.best_params_)
+    print("After CV:", grid.best_score_)
+
+    print("After Accuracy:", accuracy_score(y_test, grid.predict(X_test)))
+
+print("\nOptimization Completed!")
