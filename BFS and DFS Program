@@ -1,0 +1,58 @@
+# BFS and DFS Program
+
+graph = {
+     'A': ['B', 'C'],
+     'B': ['D', 'E'],
+     'C': ['F'],
+     'D': [],
+     'E': [],
+     'F': []
+ }
+
+# Breadth First Search 
+
+def BFS(start, goal):
+     queue = [start]
+     visited = []
+
+      while queue:
+         node = queue.pop(0)
+
+          if node not in visited:
+             visited.append(node)
+
+              if node == goal:
+                 return visited
+
+              queue.extend(graph[node])
+
+      return visited  
+
+# Depth First Search 
+def DFS(start, goal):
+     stack = [start]
+     visited = []
+
+      while stack:
+         node = stack.pop()
+
+          if node not in visited:
+             visited.append(node)
+
+              if node == goal:
+                 return visited
+
+              stack.extend(reversed(graph[node]))
+
+      return visited  
+
+# Main Program 
+start = input("Enter starting node: ").upper() 
+goal = input("Enter goal node: ").upper()  
+
+if start not in graph or goal not in graph:
+     print("Invalid node") 
+
+else:
+     print("BFS:", BFS(start, goal))
+     print("DFS:", DFS(start, goal)) 
