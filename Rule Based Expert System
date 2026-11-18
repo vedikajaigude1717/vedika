@@ -1,0 +1,57 @@
+# Rule Based Expert System 
+# Knowledge Base (Rules) 
+
+rules = [
+     (["fever", "cough"], "flu"),
+     (["flu"], "take_rest"),
+     (["cold", "sneezing"], "common_cold"),
+     (["common_cold"], "take_medicine") ]  
+
+# Initial facts 
+facts = ["fever", "cough", "cold", "sneezing"]  
+
+# Forward Chaining 
+def forward_chaining(facts):
+     print("\n--- Forward Chaining ---")
+
+      while True:
+         new_fact = False
+
+          for conditions, result in rules:
+             if all(c in facts for c in conditions):
+                 if result not in facts:
+                     facts.append(result)
+                     print("New Fact:", result)
+                     new_fact = True
+
+          if not new_fact:
+             break
+      print("Final Facts:", facts)  
+
+# Backward Chaining 
+def backward_chaining(goal, facts):
+     if goal in facts:
+         return True
+
+      for conditions, result in rules:
+         if result == goal:
+             if all(backward_chaining(c, facts)
+                    for c in conditions):
+                 return True
+
+      return False  
+
+# Main Program 
+print("Initial Facts:", facts)  
+
+forward_chaining(facts)  
+
+print("\n--- Backward Chaining ---")  
+
+goal = input("Enter goal: ")  
+
+if backward_chaining(goal, facts):
+ print("Goal Achieved:", goal) 
+
+else:
+ print("Goal Not Achieved:", goal) 
