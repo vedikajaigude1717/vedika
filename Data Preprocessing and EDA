@@ -1,0 +1,74 @@
+# PR4: Data Preprocessing and EDA
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+# Load CSV Dataset
+data = pd.read_csv("heart.csv")
+
+print("First 5 Rows:")
+print(data.head())
+
+# 1. Data Cleaning
+print("\nDataset Shape:", data.shape)
+
+data = data.drop_duplicates()
+
+print("After Removing Duplicates:", data.shape)
+
+# 2. Missing Value Handling
+print("\nMissing Values:")
+print(data.isnull().sum())
+
+data = data.fillna(data.mean())
+
+print("\nMissing Values Handled")
+
+# 3. Encoding
+# Dataset already contains numerical values
+print("\nEncoding: Data is already encoded")
+
+# 4. Statistical Analysis
+print("\nStatistical Analysis:")
+print(data.describe())
+
+# 5. Separate Features and Target
+X = data.drop("target", axis=1)
+y = data["target"]
+
+# 6. Split Dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# 7. Feature Scaling
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+print("\nTraining Data:", X_train.shape)
+print("Testing Data:", X_test.shape)
+
+# 8. Histogram
+data.hist(figsize=(12, 10))
+
+plt.suptitle("Heart Disease Dataset - Histograms")
+plt.tight_layout()
+plt.show()
+
+# 9. Boxplot
+plt.figure(figsize=(12, 6))
+
+sns.boxplot(data=data.drop("target", axis=1))
+
+plt.title("Heart Disease Dataset - Boxplot")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+print("\nData Preprocessing Completed Successfully!")
