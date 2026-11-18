@@ -1,0 +1,68 @@
+# PR5: Regression Techniques
+
+import pandas as pd
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from sklearn.pipeline import make_pipeline
+
+# Load Dataset
+data = pd.read_csv("Housing.csv")
+
+print("First 5 Rows:")
+print(data.head())
+
+# Handle Missing Values
+for col in data.columns:
+    if data[col].isnull().any():
+        if data[col].dtype == "object":
+            data[col] = data[col].fillna(data[col].mode()[0])
+        else:
+            data[col] = data[col].fillna(data[col].mean())
+
+# Remove Duplicate Rows
+data = data.drop_duplicates()
+
+# Separate Input and Output
+X = data.drop("price", axis=1)
+y = data["price"]
+
+# Convert Text Data into Numbers
+X = pd.get_dummies(X, drop_first=True, dtype=int)
+
+# Split Dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Linear Regression
+linear = LinearRegression()
+
+linear.fit(X_train, y_train)
+
+pred1 = linear.predict(X_test)
+
+# Polynomial Regression
+poly = make_pipeline(
+    PolynomialFeatures(degree=2, include_bias=False),
+    LinearRegression()
+)
+
+poly.fit(X_train, y_train)
+
+pred2 = poly.predict(X_test)
+
+# Display Results
+print("\nLinear Regression")
+print("MSE:", mean_squared_error(y_test, pred1))
+print("MAE:", mean_absolute_error(y_test, pred1))
+print("R2 Score:", r2_score(y_test, pred1))
+
+print("\nPolynomial Regression")
+print("MSE:", mean_squared_error(y_test, pred2))
+print("MAE:", mean_absolute_error(y_test, pred2))
+print("R2 Score:", r2_score(y_test, pred2))
+
+print("\nRegression Completed Successfully!")
